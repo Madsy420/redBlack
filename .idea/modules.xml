@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/RBTreeUtils/RBTreeUtils.iml" filepath="$PROJECT_DIR$/RBTreeUtils/RBTreeUtils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/redBlack.iml" filepath="$PROJECT_DIR$/redBlack.iml" />
+    </modules>
+  </component>
+</project>
