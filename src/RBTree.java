@@ -81,14 +81,17 @@ public class RBTree<keyClass extends Comparable<keyClass>, valueClass>  {
         //If both the child nodes are null:
         if(isLeftNodeNull && isRightNodeNull)
         {
-            if(RBDirection.LEFT.equals(nodeDirection))
+            if(parentNode == null)
+            {
+                root = null;
+            }
+            else if(RBDirection.LEFT.equals(nodeDirection))
             {
                 //node deletion, removing all instances:
                 parentNode.setLeftNode(null);
-                node.setParentNode(null);
 
                 //if it was a black node, we would change the black height of the particular branch
-                //so we create a node representing null node and pass it fro reordering.
+                //so we create a node representing null node and pass it for reordering.
                 if(RBColor.BLACK.equals(node.getNodeColor()))
                 {
                     //null node creation, we also assign it to the double black node for later reordering/recoloring
@@ -110,28 +113,37 @@ public class RBTree<keyClass extends Comparable<keyClass>, valueClass>  {
         // if only one of the side has a child
         else if(isLeftNodeNull || isRightNodeNull)
         {
-            // find which side has the child and assign the childe to tempNode for further operation
+            // find which side has the child and assign the child to tempNode for further operation
             RBNode tempNode = isLeftNodeNull ? rightNode : leftNode;
             // assign the child node to the parent node of the node to be deleted (effectively cutting it off from the tree)
-            if(RBDirection.LEFT.equals(nodeDirection))
+            if(parentNode == null)
             {
-                parentNode.setLeftNode(tempNode);
+                root = tempNode;
+                tempNode.setParentNode(null);
+                tempNode.setColor(RBColor.BLACK);
             }
             else
             {
-                parentNode.setRightNode(tempNode);
-            }
-            tempNode.setParentNode(parentNode);
+                if (RBDirection.LEFT.equals(nodeDirection))
+                {
+                    parentNode.setLeftNode(tempNode);
+                }
+                else
+                {
+                    parentNode.setRightNode(tempNode);
+                }
+                tempNode.setParentNode(parentNode);
 
-            // if both the node to be deleted and the child node are black nodes, a double black node is formed
-            // assign it to the doubleBlackNode variable for further reordering and recoloring
-            if(RBColor.BLACK.equals(tempNode.getNodeColor()) && RBColor.BLACK.equals(node.getNodeColor()))
-            {
-                doubleBlackNode = tempNode;
-            }
-            else // else, if only one of the nodes is BLACK, just make sure the child node is BLACK
-            {
-                tempNode.setColor(RBColor.BLACK);
+                // if both the node to be deleted and the child node are black nodes, a double black node is formed
+                // assign it to the doubleBlackNode variable for further reordering and recoloring
+                if (RBColor.BLACK.equals(tempNode.getNodeColor()) && RBColor.BLACK.equals(node.getNodeColor()))
+                {
+                    doubleBlackNode = tempNode;
+                }
+                else // else, if only one of the nodes is BLACK, just make sure the child node is BLACK
+                {
+                    tempNode.setColor(RBColor.BLACK);
+                }
             }
         }
         else // if the node to be deleted has both the children as not null.
@@ -254,15 +266,7 @@ public class RBTree<keyClass extends Comparable<keyClass>, valueClass>  {
                             // remove dummy null nodes from the tree
                             if(doubleBlacknode.getNodeColor() == null)
                             {
-                                if (RBDirection.LEFT.equals(doubleBlacknode.getDirectionFromParent()))
-                                {
-                                    parentNode.setLeftNode(null);
-                                }
-                                else
-                                {
-                                    parentNode.setRightNode(null);
-                                }
-                                doubleBlacknode.setParentNode(null);
+                                disconnectNode(doubleBlacknode);
                             }
 
                             //recur with the parent node
